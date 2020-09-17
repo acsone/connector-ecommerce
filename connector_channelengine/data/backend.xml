@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2020 ACSONE SA/NV
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo noupdate="1">
+    <record id="channelengine_backend" model="channelengine.backend">
+        <field name="name">ChannelEngine Backend</field>
+        <field name="host">https://yourcompany.channelengine.net/api</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+        <field name="domain">[['default_code', 'not in', [False, '']]]</field>
+    </record>
+</odoo>

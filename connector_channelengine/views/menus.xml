@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <menuitem
+        id="menu_channelengine_root"
+        name="ChannelEngine"
+        sequence="10"
+        web_icon="connector_channelengine,static/description/icon.png"
+    />
+    <menuitem
+        id="menu_channelengine_config"
+        name="Configuration"
+        sequence="100"
+        parent="menu_channelengine_root"
+        groups="base.group_system"
+    />
+    <menuitem
+        id="channelengine_backend_menu"
+        name="ChannelEngine Backends"
+        parent="menu_channelengine_config"
+        action="channelengine_backend_act_window"
+    />
+    <menuitem
+        id="channelengine_binding_menu"
+        name="ChannelEngine Bindings"
+        parent="menu_channelengine_root"
+        action="channelengine_binding_act_window"
+    />
+</odoo>

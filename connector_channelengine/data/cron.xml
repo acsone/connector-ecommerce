@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo noupdate="1">
+    <record forcecreate="True" id="ir_cron_channelengine_update" model="ir.cron">
+        <field name="name">ChannelEngine: push updates</field>
+        <field name="active" eval="True" />
+        <field name="user_id" ref="base.user_root" />
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False" />
+        <field name="model_id" ref="model_channelengine_backend" />
+        <field name="state">code</field>
+        <field name="code">model.cron_update()</field>
+    </record>
+    <record forcecreate="True" id="ir_cron_channelengine_remove" model="ir.cron">
+        <field name="name">ChannelEngine: remove bindings</field>
+        <field name="active" eval="True" />
+        <field name="user_id" ref="base.user_root" />
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False" />
+        <field name="model_id" ref="model_channelengine_backend" />
+        <field name="state">code</field>
+        <field name="code">model.cron_remove()</field>
+    </record>
+    <record forcecreate="True" id="ir_cron_channelengine_check_domain" model="ir.cron">
+        <field name="name">ChannelEngine: check domain</field>
+        <field name="active" eval="True" />
+        <field name="user_id" ref="base.user_root" />
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False" />
+        <field name="model_id" ref="model_channelengine_backend" />
+        <field name="state">code</field>
+        <field name="code">model.cron_check_domain()</field>
+    </record>
+    <record forcecreate="True" id="ir_cron_channelengine_check_data" model="ir.cron">
+        <field name="name">ChannelEngine: check data</field>
+        <field name="active" eval="True" />
+        <field name="user_id" ref="base.user_root" />
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False" />
+        <field name="model_id" ref="model_channelengine_backend" />
+        <field name="state">code</field>
+        <field name="code">model.cron_check_data()</field>
+    </record>
+</odoo>

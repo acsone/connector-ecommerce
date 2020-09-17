@@ -1,0 +1,38 @@
+# Copyright 2020 ACSONE SA/NV
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+{
+    "name": "connector_channelengine",
+    "category": "Connector",
+    "summary": "Connector for ChannelEngine",
+    "version": "12.0.1.0.0",
+    "license": "AGPL-3",
+    "author": "ACSONE SA/NV, Odoo Community Association (OCA)",
+    "website": "https://acsone.eu",
+    "depends": [
+        "connector",
+        "component",
+        "base_jsonify",
+        "base_partition",
+        "stock",
+        "product_brand",
+        "storage_image_product",
+        "server_environment",
+    ],
+    "application": True,
+    "data": [
+        "security/ir.model.access.csv",
+        "wizard/channelengine_backend_configuration.xml",
+        "views/channelengine_backend.xml",
+        "views/channelengine_binding.xml",
+        "views/product.xml",
+        "views/menus.xml",
+        "data/channels.xml",
+        "data/resolvers.xml",
+        "data/export.xml",
+        "data/backend.xml",
+        "data/cron.xml",
+    ],
+    "demo": [],
+    "external_dependencies": {"python": ["channelengine_merchant_api_client"]},
+    "pre_init_hook": "pre_init_hook",
+}

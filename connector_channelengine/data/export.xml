@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="ir_exp_channelengine_product" model="ir.exports">
+        <field name="name">ChannelEngine Export</field>
+        <field name="resource">product.product</field>
+        <field
+            name="global_resolver_id"
+            ref="ir_exports_resolver_channelengine_global"
+        />
+    </record>
+    <record id="ir_exp_channelengine_line_name" model="ir.exports.line">
+        <field name="name">display_name</field>
+        <field name="alias">display_name:Name</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+    <record id="ir_exp_channelengine_line_description" model="ir.exports.line">
+        <field name="name">description</field>
+        <field name="alias">description:Description</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+    <record id="ir_exp_channelengine_line_price" model="ir.exports.line">
+        <field name="name">standard_price</field>
+        <field name="alias">standard_price:Price</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+    <record id="ir_exp_channelengine_line_category" model="ir.exports.line">
+        <field name="name">category_trail</field>
+        <field name="alias">category_trail:CategoryTrail</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+    <record id="ir_exp_channelengine_line_merchantno" model="ir.exports.line">
+        <field name="name">default_code</field>
+        <field name="alias">default_code:MerchantProductNo</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+    <record id="ir_exp_channelengine_line_barcode" model="ir.exports.line">
+        <field name="name">barcode</field>
+        <field name="alias">barcode:Ean</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+    <record id="ir_exp_channelengine_line_stock" model="ir.exports.line">
+        <field name="name">qty_available</field>
+        <field name="alias">qty_available:Stock</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+        <field name="resolver_id" ref="ir_exports_resolver_float_to_int" />
+    </record>
+    <record id="ir_exp_channelengine_line_cost" model="ir.exports.line">
+        <field name="name">standard_price</field>
+        <field name="alias">standard_price:Cost</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+    <record id="ir_exp_channelengine_line_brand" model="ir.exports.line">
+        <field name="name">product_brand_id/name</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+    <record id="ir_exp_channelengine_line_images" model="ir.exports.line">
+        <field name="name">variant_image_ids/image_url</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+    <record id="ir_exp_channelengine_line_attribute_values" model="ir.exports.line">
+        <field name="name">attribute_value_ids/name</field>
+        <field name="alias">attribute_value_ids/name</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+    <record id="ir_exp_channelengine_line_attribute_lines" model="ir.exports.line">
+        <field name="name">attribute_value_ids/attribute_id/name</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+    <record id="ir_exp_channelengine_line_channel_ids" model="ir.exports.line">
+        <field name="name">channel_ids/name</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+    <record id="ir_exp_channelengine_line_description_fr" model="ir.exports.line">
+        <field name="name">description</field>
+        <field name="alias">description:extraData*</field>
+        <field name="lang_id" ref="base.lang_fr" />
+        <field name="resolver_id" ref="ir_exports_translation_dict" />
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
+</odoo>

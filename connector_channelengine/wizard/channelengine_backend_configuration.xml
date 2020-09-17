@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="channelengine_backend_configuration_form_view">
+        <field name="name">ChannelEngine Backend Configuration</field>
+        <field name="model">channelengine.backend.configuration</field>
+        <field name="arch" type="xml">
+            <form string="Check Backend Configuration">
+                <group>
+                    <field name="backend_id" />
+                    <field name="export_id" readonly="1" force_save="1" />
+                    <field name="limit" />
+                    <field
+                        name="domain"
+                        widget="domain"
+                        options="{'model':'product.product'}"
+                    />
+                </group>
+                <footer>
+                    <button
+                        name="check_configuration"
+                        class="btn btn-primary"
+                        type="object"
+                        string="Check"
+                    />
+                    <button special="cancel" string="Cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record
+        model="ir.actions.act_window"
+        id="channelengine_backend_configuration_act_window"
+    >
+        <field name="name">Check ChannelEngine Backend Configuration</field>
+        <field name="res_model">channelengine.backend.configuration</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+</odoo>

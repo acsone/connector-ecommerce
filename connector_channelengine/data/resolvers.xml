@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="ir_exports_resolver_channelengine_global" model="ir.exports.resolver">
+        <field name="name">ChannelEngine global resolver</field>
+        <field name="type">global</field>
+        <field name="python_code">
+SPECIAL_KEYS = ["Color", "Size"]
+
+attributes = value.pop("attribute_value_ids", [])
+if attributes and "extraData" not in value:
+    value["extraData"] = []
+
+for attribute in attributes:
+    key = attribute["attribute_id"]["name"]
+    val = attribute["name"]
+    if key in SPECIAL_KEYS:
+        value[key] = val
+    else:
+        extraData = {"key": key, "value": val, "type": "TEXT", "is_public": True}
+        value["extraData"].append(extraData)
+
+channels = value.pop("channel_ids", []) or []
+if channels and "extraData" not in value:
+    value["extraData"] = []
+for channel in channels:
+    name = channel.get("name")
+    if name:
+        extraData = {"key": name, "value": "true", "type": "TEXT", "is_public": True}
+        value["extraData"].append(extraData)
+
+brand = (value.pop('product_brand_id') or {}).get('name')
+if brand:
+    value['Brand'] = brand
+
+for index, image in enumerate(value.pop('variant_image_ids', [])[:10]):
+    if image['image_url']:
+        key = "ExtraImageUrl{}".format(index) if index else "ImageUrl"
+        value[key] = image['image_url']
+
+result = value
+        </field>
+    </record>
+    <record id="ir_exports_resolver_float_to_int" model="ir.exports.resolver">
+        <field name="name">float to int</field>
+        <field name="python_code">
+result = int(value)
+        </field>
+    </record>
+    <record id="ir_exports_translation_dict" model="ir.exports.resolver">
+        <field name="name">ChannelEngine Translation</field>
+        <field name="python_code">
+lang = context.get("lang", "_")
+key = name + "_" + lang
+result = {"key": key, "value": str(value), "type": "TEXT", "is_public": True}
+        </field>
+    </record>
+    <record id="ir_exports_resolver_dict" model="ir.exports.resolver">
+        <field name="name">ChannelEngine ExtraData dictionary (number/text)</field>
+        <field name="python_code">
+is_number = field_type in ('integer', 'float')
+ftype = "NUMBER" if is_number else "TEXT"
+value = value if is_number else str(value)
+result = {"key": name, "value": value, "type": ftype, "is_public": True}
+        </field>
+    </record>
+    <record id="ir_exports_resolver_dict_url" model="ir.exports.resolver">
+        <field name="name">ChannelEngine URL ExtraData dictionary</field>
+        <field name="python_code">
+result = {"key": name, "value": str(value), "type": "URL", "is_public": True}
+        </field>
+    </record>
+    <record id="ir_exports_resolver_dict_imageurl" model="ir.exports.resolver">
+        <field name="name">ChannelEngine ImageURL ExtraData dictionary</field>
+        <field name="python_code">
+result = {"key": name, "value": str(value), "type": "IMAGEURL", "IsPublic": True}
+        </field>
+    </record>
+</odoo>

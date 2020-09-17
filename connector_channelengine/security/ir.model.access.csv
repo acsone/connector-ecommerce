@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_channelengine_channel,access_channelengine_channel,model_channelengine_channel,base.group_system,1,1,1,1
+access_channelengine_backend,access_channelengine_backend,model_channelengine_backend,base.group_system,1,1,1,1
+access_channelengine_binding,access_channelengine_binding,model_channelengine_binding,base.group_system,1,1,1,1
+access_channelengine_backend_user,access_channelengine_backend_user,model_channelengine_backend,base.group_user,1,0,0,0
+access_channelengine_binding_user,access_channelengine_binding_user,model_channelengine_binding,base.group_user,1,0,0,0

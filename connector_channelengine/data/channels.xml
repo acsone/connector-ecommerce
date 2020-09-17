@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="channelengine_backmarket" model="channelengine.channel">
+        <field name="name">BackMarket</field>
+        <field name="technical_name">backmarket</field>
+    </record>
+</odoo>

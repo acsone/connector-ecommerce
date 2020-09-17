@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="channelengine_backend_form_view">
+        <field name="name">ChannelEngine Backend</field>
+        <field name="model">channelengine.backend</field>
+        <field name="arch" type="xml">
+            <form string="Search Engine Backend">7
+                <header>
+                    <button
+                        name="%(channelengine_backend_configuration_act_window)d"
+                        string="Check Configuration"
+                        type="action"
+                    />
+                    <button
+                        name="check_all_domain"
+                        string="Check Domain"
+                        type="object"
+                        class="btn-primary"
+                    />
+                    <button
+                        name="check_all_data"
+                        string="Recompute Data"
+                        type="object"
+                        class="btn-primary"
+                    />
+                </header>
+                <group>
+                    <field name="name" />
+                    <field name="host" />
+                    <field
+                        name="domain"
+                        widget="domain"
+                        options="{'model':'product.product'}"
+                    />
+                    <field name="export_id" />
+                    <field name="depends" groups="base.group_no_one" />
+                </group>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="channelengine_backend_tree_view">
+        <field name="name">channelengine.backend.tree</field>
+        <field name="model">channelengine.backend</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+            </tree>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="channelengine_backend_act_window">
+        <field name="name">ChannelEngine Backend</field>
+        <field name="res_model">channelengine.backend</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+</odoo>

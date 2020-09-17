@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="channelengine_binding_form_view">
+        <field name="name">channelengine.binding.form</field>
+        <field name="model">channelengine.binding</field>
+        <field name="arch" type="xml">
+            <form string="ChannelEngine Binding">
+                <group>
+                    <field name="display_name" />
+                    <field name="product_id" />
+                    <field name="backend_id" />
+                    <field name="state" />
+                    <field name="check_backends" />
+                    <field
+                        name="exception"
+                        attrs="{'readonly':[('exception','=','ok')]}"
+                    />
+                    <field name="message" />
+                </group>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="channelengine_binding_tree_view">
+        <field name="name">channelengine.binding.tree</field>
+        <field name="model">channelengine.binding</field>
+        <field name="arch" type="xml">
+            <tree create="false" import="false">
+                <field name="product_id" />
+                <field name="state" />
+                <field name="exception" />
+                <field name="message" />
+            </tree>
+        </field>
+    </record>
+    <record id="channelengine_binding_search_view" model="ir.ui.view">
+        <field name="name">channelengine.binding.search</field>
+        <field name="model">channelengine.binding</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id" />
+                <filter
+                    string="Exception"
+                    name="bindings_in_exception"
+                    domain="[('exception', '=', 'exception')]"
+                />
+                <filter
+                    string="Warnings"
+                    name="bindings_in_warning"
+                    domain="[('exception', '=', 'warning')]"
+                />
+                <filter
+                    string="Not OK"
+                    name="bindings_in_warning"
+                    domain="[('exception', '!=', 'ok')]"
+                />
+                <filter
+                    string="To Check"
+                    name="bindings_to_check"
+                    domain="[('check_backends', '=', True)]"
+                />
+                <group expand="0" string="Group By" colspan="4" col="4">
+                    <filter
+                        string="Backend"
+                        name="group_by_backend"
+                        domain="[]"
+                        context="{'group_by':'backend_id'}"
+                    />
+                    <filter
+                        string="State"
+                        name="group_by_state"
+                        domain="[]"
+                        context="{'group_by':'state'}"
+                    />
+                    <filter
+                        string="Exception"
+                        name="group_by_exception"
+                        domain="[]"
+                        context="{'group_by':'exception'}"
+                    />
+                    <filter
+                        string="To Check"
+                        name="group_by_checks"
+                        domain="[]"
+                        context="{'group_by':'check_backends'}"
+                    />
+                </group>
+            </search>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="channelengine_binding_act_window">
+        <field name="name">ChannelEngine Bindings</field>
+        <field name="res_model">channelengine.binding</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+</odoo>
