@@ -52,28 +52,26 @@ class ChannelEngineAdapter(Component):
         return parents
 
     def export(self, bindings):
-        done, warning, exception = (
-            bindings.browse(),
-            bindings.browse(),
-            bindings.browse(),
-        )
-        if len(bindings):  # TODO!!:batch by 5000
+        done = bindings.browse()
+        warning = bindings.browse()
+        exception = bindings.browse()
+        for batch in bindings.batch(5000):
             client = self._get_product_client()
-            product_data = bindings.mapped("data")
+            product_data = batch.mapped("data")
             parent_data = self._export_parents(bindings, product_data)
             data = parent_data + product_data
             try:
                 response = client.product_create(merchant_product_request=data)
             except ApiException as e:
                 _logger.exception("[CEC] {}".format(e))
-                exception = bindings
-            except Exception as e:  # TODO: refine handling
+                exception |= batch
+            except Exception as e:  # TODO: refine handling (e.g. 500 status)
                 message = "[CEC] {}".format(e)
                 _logger.exception(message)
                 raise RetryableJobError(message)
             else:
-                done, warning, exception = self.process_response_messages(
-                    bindings, response
+                done, warning, exception = self._process_response_messages(
+                    batch, response, done, warning, exception
                 )
         return self._process_export_done_exception(done, warning, exception)
 
@@ -83,33 +81,32 @@ class ChannelEngineAdapter(Component):
         exception.write({"exception": "exception"})
         return done, warning, exception
 
-    def process_response_messages(self, bindings, response):
-        done, warning, exception = (
-            bindings.browse(),
-            bindings.browse(),
-            bindings.browse(),
-        )
+    def _process_response_messages(self, bindings, response, done, warning, exception):
         # warning: 'accepted_count' may not valid if there are products without
         # MerchantProductNo (these are automatically rejected).
         if not response.success:
-            return done, warning, bindings
+            exception |= bindings
+            return done, warning, exception
+        new_exceptions = bindings.browse()
         for message in response.content.product_messages:
             binding = bindings.filtered(
                 lambda b, name=message.name: b.data["Name"] == name
             )
             if message.errors:
-                exception |= binding
+                new_exceptions |= binding
             elif message.warnings:
                 warning |= binding
             if message.warnings or message.errors:
                 timestamp = ["Date: {}".format(datetime.now())]
                 all_messages = timestamp + message.warnings + message.errors
                 binding.write({"message": "\n\n".join(all_messages)})
-        if not len(exception) == response.content.rejected_count:
+        if not len(new_exceptions) == response.content.rejected_count:
             _logger.warning(
                 "[CEC] Number of exceptions improperly processed: {}".format(response)
             )
-        return bindings - exception, warning, exception
+        done |= bindings - new_exceptions
+        exception |= new_exceptions
+        return done, warning, exception
 
     def delete(self, bindings):
         client = self._get_product_client()
