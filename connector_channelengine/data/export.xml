@@ -33,6 +33,11 @@
         <field name="alias">default_code:MerchantProductNo</field>
         <field name="export_id" ref="ir_exp_channelengine_product" />
     </record>
+    <record id="ir_exp_channelengine_line_parent" model="ir.exports.line">
+        <field name="name">channelengine_parent</field>
+        <field name="alias">channelengine_parent:ParentMerchantProductNo</field>
+        <field name="export_id" ref="ir_exp_channelengine_product" />
+    </record>
     <record id="ir_exp_channelengine_line_barcode" model="ir.exports.line">
         <field name="name">barcode</field>
         <field name="alias">barcode:Ean</field>

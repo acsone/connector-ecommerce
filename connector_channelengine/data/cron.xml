@@ -10,7 +10,7 @@
         <field name="doall" eval="False" />
         <field name="model_id" ref="model_channelengine_backend" />
         <field name="state">code</field>
-        <field name="code">model.cron_update()</field>
+        <field name="code">model.cron_update(limit=5000)</field>
     </record>
     <record forcecreate="True" id="ir_cron_channelengine_remove" model="ir.cron">
         <field name="name">ChannelEngine: remove bindings</field>
@@ -22,7 +22,7 @@
         <field name="doall" eval="False" />
         <field name="model_id" ref="model_channelengine_backend" />
         <field name="state">code</field>
-        <field name="code">model.cron_remove()</field>
+        <field name="code">model.cron_remove(limit=50)</field>
     </record>
     <record forcecreate="True" id="ir_cron_channelengine_check_domain" model="ir.cron">
         <field name="name">ChannelEngine: check domain</field>
