@@ -27,11 +27,7 @@
                 <group>
                     <field name="name" />
                     <field name="host" />
-                    <field
-                        name="domain"
-                        widget="domain"
-                        options="{'model':'product.product'}"
-                    />
+                    <field name="assortment_id" />
                     <field name="export_id" />
                     <field name="depends" groups="base.group_no_one" />
                 </group>

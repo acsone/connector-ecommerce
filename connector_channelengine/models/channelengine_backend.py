@@ -1,8 +1,7 @@
 # Copyright 2020 ACSONE SA/NV
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import _, api, fields, models
-from odoo.exceptions import ValidationError
+from odoo import api, fields, models
 from odoo.tools.safe_eval import safe_eval
 
 
@@ -22,8 +21,12 @@ class ChannelEngineBackend(models.Model):
     _sql_constraints = [
         ("uniq_host", "unique (host)", "There can be at most one backend per host.")
     ]
-    domain = fields.Char(
-        default="[]", string="Domain", help="Domain used to export the products."
+    assortment_id = fields.Many2one(
+        required=True,
+        comodel_name="ir.filters",
+        string="Product Assortment",
+        domain=[("is_assortment", "=", True)],
+        help="Set products to be exported.",
     )
     depends = fields.Char(compute="_compute_binding_depends", store=True)
     export_id = fields.Many2one(
@@ -38,17 +41,6 @@ class ChannelEngineBackend(models.Model):
         env_fields = super()._server_env_fields
         env_fields.update({"api_key": {}})
         return env_fields
-
-    @api.constrains("domain")
-    def _domain_constraint(self):
-        for backend in self:
-            try:
-                domain = safe_eval(backend.domain)
-                self.env["product.product"].search(domain)
-            except Exception as e:  # TODO: refine handling
-                message = _("The domain is not correctly set. Original error:")
-                full_message = "{}\n{}".format(message, e)
-                raise ValidationError(full_message)
 
     @api.model
     def create(self, vals):
@@ -73,7 +65,7 @@ class ChannelEngineBackend(models.Model):
         """
         Binding = self.env["channelengine.binding"]
         for backend in self:
-            bdomain = safe_eval(backend.domain) + [("active", "=", True)]
+            bdomain = backend.assortment_id._get_eval_domain() + [("active", "=", True)]
 
             def bfilter(p, bkd=backend):  # E731
                 return bkd not in p.mapped("binding_ids.backend_id")

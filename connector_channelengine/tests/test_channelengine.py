@@ -9,11 +9,18 @@ class TestChannelEngine(SavepointComponentCase):
         super(TestChannelEngine, self).setUp()
 
         export_id = "connector_channelengine.ir_exp_channelengine_product"
+        self.assortment = self.env["ir.filters"].create(
+            {
+                "name": "Test assortment",
+                "model_id": "product.product",
+                "domain": "[['name', '=', 'product']]",
+            }
+        )
         self.backend = self.env["channelengine.backend"].create(
             {
                 "name": "Test Backend",
                 "export_id": self.env.ref(export_id).id,
-                "domain": "[['name', '=', 'product']]",
+                "assortment_id": self.assortment.id,
             }
         )
 

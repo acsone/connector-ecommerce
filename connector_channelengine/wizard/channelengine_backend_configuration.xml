@@ -9,11 +9,7 @@
                     <field name="backend_id" />
                     <field name="export_id" readonly="1" force_save="1" />
                     <field name="limit" />
-                    <field
-                        name="domain"
-                        widget="domain"
-                        options="{'model':'product.product'}"
-                    />
+                    <field name="assortment_id" />
                 </group>
                 <footer>
                     <button

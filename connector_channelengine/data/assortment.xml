@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2020 ACSONE SA/NV
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo noupdate="1">
+    <record id="default_assortment" model="ir.filters">
+        <field name="name">ChannelEngine Assortment</field>
+        <field name="is_assortment" eval="True" />
+        <field name="model_id">product.product</field>
+        <field name="domain">[['default_code', 'not in', [False, '']]]</field>
+    </record>
+</odoo>
