@@ -23,6 +23,7 @@
         "security/ir.model.access.csv",
         "wizard/channelengine_backend_configuration.xml",
         "views/channelengine_backend.xml",
+        "views/channelengine_channel.xml",
         "views/channelengine_binding.xml",
         "views/product.xml",
         "views/menus.xml",

@@ -16,8 +16,16 @@
     <menuitem
         id="channelengine_backend_menu"
         name="ChannelEngine Backends"
+        sequence="1"
         parent="menu_channelengine_config"
         action="channelengine_backend_act_window"
+    />
+    <menuitem
+        id="channelengine_channel_menu"
+        name="ChannelEngine Channels"
+        sequence="2"
+        parent="menu_channelengine_config"
+        action="channelengine_channel_act_window"
     />
     <menuitem
         id="channelengine_binding_menu"

@@ -29,6 +29,7 @@
                 <field name="state" />
                 <field name="exception" />
                 <field name="message" />
+                <field name="check_backends" />
             </tree>
         </field>
     </record>

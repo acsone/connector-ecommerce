@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record model="ir.ui.view" id="channelengine_channel_form_view">
+        <field name="name">ChannelEngine Channel</field>
+        <field name="model">channelengine.channel</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="name" />
+                    <field name="default" />
+                </group>
+            </form>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="channelengine_channel_tree_view">
+        <field name="name">channelengine.channel.tree</field>
+        <field name="model">channelengine.channel</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="default" />
+            </tree>
+        </field>
+    </record>
+    <record model="ir.actions.act_window" id="channelengine_channel_act_window">
+        <field name="name">ChannelEngine Channels</field>
+        <field name="res_model">channelengine.channel</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+</odoo>
