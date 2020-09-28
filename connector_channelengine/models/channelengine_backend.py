@@ -28,7 +28,10 @@ class ChannelEngineBackend(models.Model):
         domain=[("is_assortment", "=", True)],
         help="Set products to be exported.",
     )
-    depends = fields.Char(compute="_compute_binding_depends", store=True)
+    domain_recompute = fields.Boolean(
+        compute="_compute_domain_assortment", store=True, readonly=True
+    )
+    depends = fields.Char(compute="_compute_binding_depends", store=True, readonly=True)
     export_id = fields.Many2one(
         required=True,
         string="Mapping",
@@ -75,13 +78,30 @@ class ChannelEngineBackend(models.Model):
 
             products_with_bindings = products - products_without_bindings
             products_wb_indomain = products_with_bindings.filtered_domain(bdomain)
+            rfilter = lambda b, bk=backend: b.backend_id == bk  # noqa
+            existing_bindings = products_wb_indomain.mapped("binding_ids")
+            existing_bindings_bkd = existing_bindings.filtered(rfilter)
+            to_keep = existing_bindings_bkd.filtered(lambda b: b.state == "toremove")
+            to_keep.mark_tocheck(force_todo=True)
+
             products_to_remove = products_with_bindings - products_wb_indomain
             if products_to_remove:
                 bindings = products_to_remove.mapped("binding_ids")
-                rfilter = lambda b, bk=backend: b.backend_id == bk  # noqa
                 bindings_to_remove = bindings.filtered(rfilter)
                 bindings_to_remove.mark_toremove()
         products.write({"check_backends": False})
+
+    @api.depends(
+        "assortment_id.domain",
+        "assortment_id.blacklist_product_ids",
+        "assortment_id.whitelist_product_ids",
+    )
+    def _compute_domain_assortment(self):
+        """This function marks product to be checked when the domain is changed.
+        """
+        self.env["product.product"].search([]).write({"check_backends": True})
+        for backend in self:
+            backend.domain_recompute = True
 
     @api.depends("export_id.export_fields")
     def _compute_binding_depends(self):
