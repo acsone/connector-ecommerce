@@ -20,7 +20,9 @@ class ProductTemplate(models.Model):
 class Product(models.Model):
     _inherit = "product.product"
 
-    binding_ids = fields.One2many("channelengine.binding", "product_id", copy=False)
+    binding_ids = fields.One2many(
+        "channelengine.binding", "product_id", copy=False, readonly=True,
+    )
     check_backends = fields.Boolean(
         copy=False,
         string="Check backend domains",
@@ -28,7 +30,9 @@ class Product(models.Model):
         default=True,
         help="Whether this product needs to be checked for backend domains.",
     )
-    category_trail = fields.Char(compute="_compute_category_trail", store=True)
+    category_trail = fields.Char(
+        compute="_compute_category_trail", store=True, readonly=True,
+    )
     channelengine_parent = fields.Char(
         compute="_compute_merchant_parent",
         store=True,
