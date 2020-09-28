@@ -128,13 +128,35 @@ class ChannelEngineAdapter(Component):
                     done |= binding
                 else:
                     message = response.message
-                    log = "[CEC] Deletion failed for binding {}: {}".format(
-                        binding.id, message
-                    )
-                    _logger.exception(log)
+                    log = "[CEC] Deletion failed for binding {}: {}"
+                    _logger.exception(log.format(binding.id, message))
                     binding.message = message
                     exception |= binding
+        self._remove_parents(client, done)
         return self._process_delete_done_exception(done, warning, exception)
+
+    def _get_parents_to_remove(self, bindings):
+        """After we removed some bindings, if there are no more variants that have
+           a binding on this backend, then the parent is co-orphaned;
+           these should thus be removed.
+           We directly return the parent identifiers: [str]
+        """
+        parents = []
+        p_with_parents = bindings.mapped("product_id").filtered("channelengine_parent")
+        for template in p_with_parents.mapped("product_tmpl_id"):
+            tmplt_bdgs = template.product_variant_ids.mapped("binding_ids")
+            bkd_filter = lambda b: b.backend_id == self.work.backend  # noqa (E731)
+            if not any(b for b in tmplt_bdgs if bkd_filter(b) and b not in bindings):
+                parents.append(template.product_variant_ids[0].channelengine_parent)
+        return parents
+
+    def _remove_parents(self, client, bindings):
+        parents = self._get_parents_to_remove(bindings)
+        for parent in parents:
+            try:
+                client.product_delete(merchant_product_no=parent)
+            except ApiException as e:
+                _logger.exception("[CEC] Removing parent {}: {}".format(parent, e))
 
     def _process_delete_done_exception(self, done, warning, exception):
         done.with_context(synchronized=True).unlink()
