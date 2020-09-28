@@ -76,9 +76,9 @@ class ChannelEngineAdapter(Component):
         return self._process_export_done_exception(done, warning, exception)
 
     def _process_export_done_exception(self, done, warning, exception):
-        done.write({"state": "done", "exception": "ok"})
-        warning.write({"state": "done", "exception": "warning"})
-        exception.write({"exception": "exception"})
+        done.mark_done()
+        warning.mark_done(with_warning=True)
+        exception.mark_exception()
         return done, warning, exception
 
     def _process_response_messages(self, bindings, response, done, warning, exception):
@@ -138,5 +138,5 @@ class ChannelEngineAdapter(Component):
 
     def _process_delete_done_exception(self, done, warning, exception):
         done.with_context(synchronized=True).unlink()
-        exception.write({"exception": "exception"})
+        exception.mark_exception()
         return exception.browse(), warning, exception

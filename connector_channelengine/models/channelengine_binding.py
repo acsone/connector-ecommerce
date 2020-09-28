@@ -30,10 +30,16 @@ def read_per_record(self, fields=None, load="_classic_read"):
 
 class ChannelengineBinding(models.Model):
     """Stores the data to export.
-       TODO: The only possible interaction a user should have with it is set its
-       exception state to OK after checking the message and solving the issues.
+       The only possible interaction a user should have with it is set its
+       exception state to OK after checking the message and solving the issues,
+       when it is in warning or exception.
        So no create, copy, write, delete.
-       => add a group for it, and make the synchronisation run with that user?
+       We only forbid explicitly the unlink because we would lose information;
+       in all other cases, if the user manually does something
+       (e.g. add a binding for a product)
+       then the various crons will restore the normal situation
+       (so remove it if the product should not be exported,
+       or it would have been created anyway).
     """
 
     _name = "channelengine.binding"
@@ -49,6 +55,14 @@ class ChannelengineBinding(models.Model):
     )
     message = fields.Text(readonly=True)
     data = fields.Serialized(compute="_compute_data", store=True)
+
+    _sql_constraints = [
+        (
+            "uniq_backend_product",
+            "unique (backend_id, product_id)",
+            "There can be at most one binding per backend and product couple.",
+        ),
+    ]
 
     @api.model
     def create_from_products(self, backend, products):
@@ -69,19 +83,37 @@ class ChannelengineBinding(models.Model):
     @api.depends(lambda self: self.get_export_fields())
     def _compute_data(self):
         old_data = read_per_record(self, ["data"])
-        bindings_per_backend = self.partition("backend_id")
+        bindings_toprocess = self.filtered(lambda s: s.state != "toremove")
+        bindings_per_backend = bindings_toprocess.partition("backend_id")
         for backend in bindings_per_backend:
             parser = backend.export_id.get_json_parser()
             records = bindings_per_backend[backend]
             datas = records.mapped("product_id").jsonify(parser)  # TODO?
             for record, data in zip(records, datas):
                 if data != old_data.get(record.id, {}).get("data"):
-                    record.data = data
-                    record.state = "todo"
-                    record.exception = "ok"
+                    record.mark_todo()
                 else:
-                    record.data = data
-                record.check_backends = False
+                    record.check_backends = False
+                record.data = data
+
+    def mark_tocheck(self, force_todo=False):
+        vals = {"check_backends": True}
+        if force_todo:
+            vals["state"] = "todo"
+        return self.write(vals)
+
+    def mark_toremove(self):
+        return self.write({"state": "toremove", "exception": "ok"})
+
+    def mark_todo(self):
+        return self.write({"state": "todo", "exception": "ok", "check_backends": False})
+
+    def mark_exception(self):
+        return self.write({"exception": "exception"})
+
+    def mark_done(self, with_warning=False):
+        exception_state = "warning" if with_warning else "ok"
+        return self.write({"state": "done", "exception": exception_state})
 
     @api.depends("product_id.name", "backend_id.name")
     def _compute_display_name(self):

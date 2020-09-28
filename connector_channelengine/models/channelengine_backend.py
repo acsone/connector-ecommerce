@@ -66,24 +66,21 @@ class ChannelEngineBackend(models.Model):
         Binding = self.env["channelengine.binding"]
         for backend in self:
             bdomain = backend.assortment_id._get_eval_domain() + [("active", "=", True)]
-
-            def bfilter(p, bkd=backend):  # E731
-                return bkd not in p.mapped("binding_ids.backend_id")
-
+            bkd_field = "binding_ids.backend_id"
+            bfilter = lambda p, bkd=backend: bkd not in p.mapped(bkd_field)  # noqa
             products_without_bindings = products.filtered(bfilter)
             products_to_bind = products_without_bindings.filtered_domain(bdomain)
             if products_to_bind:
                 Binding.create_from_products(backend, products_to_bind)
 
             products_with_bindings = products - products_without_bindings
-            products_to_remove = (
-                products_with_bindings - products_with_bindings.filtered_domain(bdomain)
-            )
+            products_wb_indomain = products_with_bindings.filtered_domain(bdomain)
+            products_to_remove = products_with_bindings - products_wb_indomain
             if products_to_remove:
                 bindings = products_to_remove.mapped("binding_ids")
                 rfilter = lambda b, bk=backend: b.backend_id == bk  # noqa
                 bindings_to_remove = bindings.filtered(rfilter)
-                bindings_to_remove.write({"state": "toremove", "exception": "ok"})
+                bindings_to_remove.mark_toremove()
         products.write({"check_backends": False})
 
     @api.depends("export_id.export_fields")
@@ -101,7 +98,7 @@ class ChannelEngineBackend(models.Model):
             Binding._setup_fields()
             Binding._setup_complete()
             new_domain = [("backend_id", "in", [r.id for r in new_depends])]
-            Binding.search(new_domain).write({"check_backends": True})
+            Binding.search(new_domain).mark_tocheck()
 
         for record in depends:
             record.depends = depends[record]
@@ -167,7 +164,7 @@ class ChannelEngineBackend(models.Model):
             deleter.run()
 
     def cron_check_data(self, limit=None):
-        base_domain = [("check_backends", "=", True)]
+        base_domain = [("check_backends", "=", True), ("state", "!=", "toremove")]
         for work in self._work_by_backend(base_domain, limit=limit):
             work.records._compute_data()
 
