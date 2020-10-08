@@ -4,7 +4,7 @@
         <field name="name">ChannelEngine Backend</field>
         <field name="model">channelengine.backend</field>
         <field name="arch" type="xml">
-            <form string="Search Engine Backend">7
+            <form string="Search Engine Backend">
                 <header>
                     <button
                         name="%(channelengine_backend_configuration_act_window)d"
