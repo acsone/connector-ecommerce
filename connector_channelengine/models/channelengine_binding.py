@@ -97,23 +97,30 @@ class ChannelengineBinding(models.Model):
                 record.data = data
 
     def mark_tocheck(self, force_todo=False):
-        vals = {"check_backends": True}
-        if force_todo:
-            vals["state"] = "todo"
-        return self.write(vals)
+        for record in self:
+            record.check_backends = True
+            if force_todo:
+                record.state = "todo"
 
     def mark_toremove(self):
-        return self.write({"state": "toremove", "exception": "ok"})
+        for record in self:
+            record.state = "toremove"
+            record.exception = "ok"
 
     def mark_todo(self):
-        return self.write({"state": "todo", "exception": "ok", "check_backends": False})
+        for record in self:
+            record.state = "todo"
+            record.exception = "ok"
+            record.check_backends = False
 
     def mark_exception(self):
-        return self.write({"exception": "exception"})
+        for record in self:
+            record.exception = "exception"
 
     def mark_done(self, with_warning=False):
-        exception_state = "warning" if with_warning else "ok"
-        return self.write({"state": "done", "exception": exception_state})
+        for record in self:
+            record.state = "done"
+            record.exception = "warning" if with_warning else "ok"
 
     @api.depends("product_id.name", "backend_id.name")
     def _compute_display_name(self):
